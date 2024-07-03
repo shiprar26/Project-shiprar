@@ -1,0 +1,173 @@
+Database Creation and Table Definition
+
+-- Create a database (if not exists)
+CREATE DATABASE sales_data;
+
+-- Connect to the newly created database
+\c sales_data;
+
+Since I Worked with online postgresql compiler I dont have access to create a DB hence started with creating table
+
+-- Create the sales_sample table
+CREATE TABLE sales_sample (
+    Product_Id INTEGER,
+    Region VARCHAR(50),
+    Date DATE,
+    Sales_Amount NUMERIC
+);
+
+2. Data Creation
+
+INSERT INTO sales_sample (Product_Id, Region, Date, Sales_Amount)
+VALUES
+    (1, 'East', '2024-01-01', 1000),
+    (2, 'West', '2024-01-02', 1500),
+    (3, 'East', '2024-01-03', 800),
+    (1, 'West', '2024-01-04', 1200),
+    (2, 'East', '2024-01-05', 2000),
+    (3, 'West', '2024-01-06', 900),
+    (1, 'East', '2024-01-07', 1100),
+    (2, 'West', '2024-01-08', 1300),
+    (3, 'East', '2024-01-09', 850),
+    (1, 'West', '2024-01-10', 1250);
+
+3.Perform OLAP operations
+a) Drill Down-Analyze sales data at a more detailed level. Write a query to perform drill down
+from region to product level to understand sales performance.
+
+SELECT Region, Product_Id, SUM(Sales_Amount) AS Total_Sales
+FROM sales_sample
+GROUP BY Region, Product_Id
+ORDER BY Region, Product_Id;
+
+Output:
+region | product_id | total_sales 
+--------+------------+-------------
+ East   |          1 |        2100
+ East   |          2 |        2000
+ East   |          3 |        1650
+ West   |          1 |        2450
+ West   |          2 |        2800
+ West   |          3 |         900
+
+b) Rollup- To summarize sales data at different levels of granularity. Write a query to perform
+roll up from product to region level to view total sales by region.
+
+SELECT COALESCE(Region, 'Total') AS Region, Product_Id, SUM(Sales_Amount) AS Total_Sales
+FROM sales_sample
+GROUP BY ROLLUP (Region, Product_Id)
+ORDER BY Region, Product_Id;
+
+Output:
+
+region | product_id | total_sales 
+--------+------------+-------------
+ East   |          1 |        2100
+ East   |          2 |        2000
+ East   |          3 |        1650
+ East   |            |        5750
+ Total  |            |       11900
+ West   |          1 |        2450
+ West   |          2 |        2800
+ West   |          3 |         900
+ West   |            |        6150
+
+c) Cube
+Explore sales data from different dimensions (product, region, date):
+
+SELECT Region, Product_Id, Date, SUM(Sales_Amount) AS Total_Sales
+FROM sales_sample
+GROUP BY CUBE (Region, Product_Id, Date)
+ORDER BY Region, Product_Id, Date;
+
+Output:
+
+region | product_id |    date    | total_sales 
+--------+------------+------------+-------------
+ East   |          1 | 2024-01-01 |        1000
+ East   |          1 | 2024-01-07 |        1100
+ East   |          1 |            |        2100
+ East   |          2 | 2024-01-05 |        2000
+ East   |          2 |            |        2000
+ East   |          3 | 2024-01-03 |         800
+ East   |          3 | 2024-01-09 |         850
+ East   |          3 |            |        1650
+ East   |            | 2024-01-01 |        1000
+ East   |            | 2024-01-03 |         800
+ East   |            | 2024-01-05 |        2000
+ East   |            | 2024-01-07 |        1100
+ East   |            | 2024-01-09 |         850
+ East   |            |            |        5750
+ West   |          1 | 2024-01-04 |        1200
+ West   |          1 | 2024-01-10 |        1250
+ West   |          1 |            |        2450
+ West   |          2 | 2024-01-02 |        1500
+ West   |          2 | 2024-01-08 |        1300
+ West   |          2 |            |        2800
+ West   |          3 | 2024-01-06 |         900
+ West   |          3 |            |         900
+ West   |            | 2024-01-02 |        1500
+ West   |            | 2024-01-04 |        1200
+ West   |            | 2024-01-06 |         900
+ West   |            | 2024-01-08 |        1300
+ West   |            | 2024-01-10 |        1250
+ West   |            |            |        6150
+        |          1 | 2024-01-01 |        1000
+        |          1 | 2024-01-04 |        1200
+        |          1 | 2024-01-07 |        1100
+        |          1 | 2024-01-10 |        1250
+        |          1 |            |        4550
+        |          2 | 2024-01-02 |        1500
+        |          2 | 2024-01-05 |        2000
+        |          2 | 2024-01-08 |        1300
+        |          2 |            |        4800
+        |          3 | 2024-01-03 |         800
+        |          3 | 2024-01-06 |         900
+        |          3 | 2024-01-09 |         850
+        |          3 |            |        2550
+        |            | 2024-01-01 |        1000
+        |            | 2024-01-02 |        1500
+        |            | 2024-01-03 |         800
+        |            | 2024-01-04 |        1200
+        |            | 2024-01-05 |        2000
+        |            | 2024-01-06 |         900
+        |            | 2024-01-07 |        1100
+        |            | 2024-01-08 |        1300
+        |            | 2024-01-09 |         850
+        |            | 2024-01-10 |        1250
+        |            |            |       11900
+
+
+
+d) Slice- To extract a subset of data based on specific criteria. Write a query to slice the data to
+view sales for a particular region or date range.*/
+
+SELECT Region, Product_Id, Date, Sales_Amount
+FROM sales_sample
+WHERE Region = 'East';
+
+Output:
+
+region | product_id |    date    | sales_amount 
+--------+------------+------------+--------------
+ East   |          1 | 2024-01-01 |         1000
+ East   |          3 | 2024-01-03 |          800
+ East   |          2 | 2024-01-05 |         2000
+ East   |          1 | 2024-01-07 |         1100
+ East   |          3 | 2024-01-09 |          850
+
+e)e) Dice - To extract data based on multiple criteria. Write a query to view sales for specific
+combinations of product, region, and date
+
+SELECT Region, Product_Id, Date, Sales_Amount
+FROM sales_sample
+WHERE Region = 'East' AND Product_Id = 1 AND Date = '2024-01-01';
+
+Output:
+
+region | product_id |    date    | sales_amount 
+--------+------------+------------+--------------
+ East   |          1 | 2024-01-01 |         1000
+
+
+
