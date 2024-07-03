@@ -1,0 +1,193 @@
+
+
+1. Database Setup
+
+CREATE DATABASE student_database;
+--used online postgre sql compiler hence does not have access to create DB BUt written the codes below
+
+Connect to the Database
+	\c student_database
+
+Create the Table
+
+CREATE TABLE student_table (
+    Student_id SERIAL PRIMARY KEY,
+    Stu_name TEXT NOT NULL,
+    Department TEXT NOT NULL,
+    email_id TEXT NOT NULL,
+    Phone_no NUMERIC NOT NULL,
+    Address TEXT NOT NULL,
+    Date_of_birth DATE NOT NULL,
+    Gender TEXT NOT NULL,
+    Major TEXT NOT NULL,
+    GPA NUMERIC NOT NULL,
+    Grade TEXT CHECK (Grade IN ('A', 'B', 'C', 'D', 'F')) NOT NULL
+);
+
+
+2. Insert Sample Records
+
+INSERT INTO student_table (Stu_name, Department, email_id, Phone_no, Address, Date_of_birth, Gender, Major, GPA, Grade)
+VALUES 
+('John Doe', 'Computer Science', 'johndoe@example.com', 1234567890, '123 Main St', '2000-01-15', 'Male', 'CS', 3.8, 'A'),
+('Jane Smith', 'Mathematics', 'janesmith@example.com', 2345678901, '456 Elm St', '2001-02-25', 'Female', 'Math', 3.5, 'B'),
+('Michael Brown', 'Physics', 'michaelbrown@example.com', 3456789012, '789 Pine St', '1999-11-30', 'Male', 'Physics', 2.9, 'C'),
+('Emily Davis', 'Chemistry', 'emilydavis@example.com', 4567890123, '101 Maple St', '2000-05-14', 'Female', 'Chemistry', 4.0, 'A'),
+('David Wilson', 'Biology', 'davidwilson@example.com', 5678901234, '202 Oak St', '2001-08-23', 'Male', 'Biology', 3.3, 'B'),
+('Sarah Johnson', 'Engineering', 'sarahjohnson@example.com', 6789012345, '303 Cedar St', '1998-03-17', 'Female', 'Engineering', 4.2, 'A'),
+('James White', 'History', 'jameswhite@example.com', 7890123456, '404 Birch St', '1999-07-22', 'Male', 'History', 2.7, 'D'),
+('Laura Green', 'Philosophy', 'lauragreen@example.com', 8901234567, '505 Walnut St', '2000-12-10', 'Female', 'Philosophy', 3.9, 'B'),
+('Robert Harris', 'Art', 'robertharris@example.com', 9012345678, '606 Spruce St', '2001-04-05', 'Male', 'Art', 3.1, 'C'),
+('Linda Martinez', 'Music', 'lindamartinez@example.com', 9123456789, '707 Fir St', '1998-09-18', 'Female', 'Music', 4.5, 'A');
+
+
+3. Student Information Retrieval
+
+SELECT * FROM student_table
+ORDER BY Grade DESC;
+
+Output:
+
+CREATE TABLE
+INSERT 0 10
+ student_id |    stu_name    |    department    |         email_id          |  phone_no  |    address    | date_of_birth | gender |    major    | gpa | grade 
+------------+----------------+------------------+---------------------------+------------+---------------+---------------+--------+-------------+-----+-------
+          7 | James White    | History          | jameswhite@example.com    | 7890123456 | 404 Birch St  | 1999-07-22    | Male   | History     | 2.7 | D
+          9 | Robert Harris  | Art              | robertharris@example.com  | 9012345678 | 606 Spruce St | 2001-04-05    | Male   | Art         | 3.1 | C
+          3 | Michael Brown  | Physics          | michaelbrown@example.com  | 3456789012 | 789 Pine St   | 1999-11-30    | Male   | Physics     | 2.9 | C
+          8 | Laura Green    | Philosophy       | lauragreen@example.com    | 8901234567 | 505 Walnut St | 2000-12-10    | Female | Philosophy  | 3.9 | B
+          2 | Jane Smith     | Mathematics      | janesmith@example.com     | 2345678901 | 456 Elm St    | 2001-02-25    | Female | Math        | 3.5 | B
+          5 | David Wilson   | Biology          | davidwilson@example.com   | 5678901234 | 202 Oak St    | 2001-08-23    | Male   | Biology     | 3.3 | B
+         10 | Linda Martinez | Music            | lindamartinez@example.com | 9123456789 | 707 Fir St    | 1998-09-18    | Female | Music       | 4.5 | A
+          4 | Emily Davis    | Chemistry        | emilydavis@example.com    | 4567890123 | 101 Maple St  | 2000-05-14    | Female | Chemistry   | 4.0 | A
+          6 | Sarah Johnson  | Engineering      | sarahjohnson@example.com  | 6789012345 | 303 Cedar St  | 1998-03-17    | Female | Engineering | 4.2 | A
+          1 | John Doe       | Computer Science | johndoe@example.com       | 1234567890 | 123 Main St   | 2000-01-15    | Male   | CS          | 3.8 | A
+(10 rows)
+
+
+
+
+
+
+4. Query for Male Students
+SELECT * FROM student_table
+WHERE Gender = 'Male';
+
+Output:
+
+CREATE TABLE
+INSERT 0 10
+ student_id |   stu_name    |    department    |         email_id         |  phone_no  |    address    | date_of_birth | gender |  major  | gpa | grade 
+------------+---------------+------------------+--------------------------+------------+---------------+---------------+--------+---------+-----+-------
+          1 | John Doe      | Computer Science | johndoe@example.com      | 1234567890 | 123 Main St   | 2000-01-15    | Male   | CS      | 3.8 | A
+          3 | Michael Brown | Physics          | michaelbrown@example.com | 3456789012 | 789 Pine St   | 1999-11-30    | Male   | Physics | 2.9 | C
+          5 | David Wilson  | Biology          | davidwilson@example.com  | 5678901234 | 202 Oak St    | 2001-08-23    | Male   | Biology | 3.3 | B
+          7 | James White   | History          | jameswhite@example.com   | 7890123456 | 404 Birch St  | 1999-07-22    | Male   | History | 2.7 | D
+          9 | Robert Harris | Art              | robertharris@example.com | 9012345678 | 606 Spruce St | 2001-04-05    | Male   | Art     | 3.1 | C
+
+
+
+
+5.--Query for Students with GPA less than 5.0
+
+SELECT * FROM student_table
+WHERE GPA < 5.0;
+
+Output:
+
+CREATE TABLE
+INSERT 0 10
+ student_id |    stu_name    |    department    |         email_id          |  phone_no  |    address    | date_of_birth | gender |    major    | gpa | grade 
+------------+----------------+------------------+---------------------------+------------+---------------+---------------+--------+-------------+-----+-------
+          1 | John Doe       | Computer Science | johndoe@example.com       | 1234567890 | 123 Main St   | 2000-01-15    | Male   | CS          | 3.8 | A
+          2 | Jane Smith     | Mathematics      | janesmith@example.com     | 2345678901 | 456 Elm St    | 2001-02-25    | Female | Math        | 3.5 | B
+          3 | Michael Brown  | Physics          | michaelbrown@example.com  | 3456789012 | 789 Pine St   | 1999-11-30    | Male   | Physics     | 2.9 | C
+          4 | Emily Davis    | Chemistry        | emilydavis@example.com    | 4567890123 | 101 Maple St  | 2000-05-14    | Female | Chemistry   | 4.0 | A
+          5 | David Wilson   | Biology          | davidwilson@example.com   | 5678901234 | 202 Oak St    | 2001-08-23    | Male   | Biology     | 3.3 | B
+          6 | Sarah Johnson  | Engineering      | sarahjohnson@example.com  | 6789012345 | 303 Cedar St  | 1998-03-17    | Female | Engineering | 4.2 | A
+          7 | James White    | History          | jameswhite@example.com    | 7890123456 | 404 Birch St  | 1999-07-22    | Male   | History     | 2.7 | D
+          8 | Laura Green    | Philosophy       | lauragreen@example.com    | 8901234567 | 505 Walnut St | 2000-12-10    | Female | Philosophy  | 3.9 | B
+          9 | Robert Harris  | Art              | robertharris@example.com  | 9012345678 | 606 Spruce St | 2001-04-05    | Male   | Art         | 3.1 | C
+         10 | Linda Martinez | Music            | lindamartinez@example.com | 9123456789 | 707 Fir St    | 1998-09-18    | Female | Music       | 4.5 | A
+(10 rows)
+
+
+
+6. Update Student Email and Grade
+
+UPDATE student_table
+SET email_id = 'newemail@example.com', Grade = 'A'
+WHERE Student_id = 1;
+
+Output:
+
+CREATE TABLE
+INSERT 0 10
+UPDATE 1
+
+7. Query for Students with Grade "B"
+SELECT Stu_name, DATE_PART('year', AGE(Date_of_birth)) AS Age
+FROM student_table
+WHERE Grade = 'B';
+
+Output:
+
+CREATE TABLE
+INSERT 0 10
+   stu_name   | age 
+--------------+-----
+ Jane Smith   |  23
+ David Wilson |  22
+ Laura Green  |  23
+(3 rows)
+
+
+8. Grouping and Calculation
+SELECT Department, Gender, AVG(GPA) AS Average_GPA
+FROM student_table
+GROUP BY Department, Gender;
+
+Output:
+
+CREATE TABLE
+INSERT 0 10
+    department    | gender |    average_gpa     
+------------------+--------+--------------------
+ Philosophy       | Female | 3.9000000000000000
+ History          | Male   | 2.7000000000000000
+ Chemistry        | Female | 4.0000000000000000
+ Music            | Female | 4.5000000000000000
+ Mathematics      | Female | 3.5000000000000000
+ Engineering      | Female | 4.2000000000000000
+ Art              | Male   | 3.1000000000000000
+ Biology          | Male   | 3.3000000000000000
+ Computer Science | Male   | 3.8000000000000000
+ Physics          | Male   | 2.9000000000000000
+
+9.Table Renaming
+
+ALTER TABLE student_table RENAME TO student_info;
+Output:
+
+CREATE TABLE
+INSERT 0 10
+ALTER TABLE
+
+10. Retrieve Student with Highest GPA
+
+SELECT Stu_name
+FROM student_info
+ORDER BY GPA DESC
+LIMIT 1;
+
+Output:
+
+ Linda Martinez
+
+
+
+
+
+
+
+
