@@ -1,0 +1,216 @@
+
+
+1. Database Creation
+
+-- Create the database
+CREATE DATABASE EventsManagement;
+
+-- Connect to the database
+\c EventsManagement;
+
+Since I Worked with online postgresql compiler I dont have access to create a DB hence started with creating table
+
+-- Create the Events table
+CREATE TABLE Events (
+    Event_Id SERIAL PRIMARY KEY,
+    Event_Name VARCHAR(100) NOT NULL,
+    Event_Date DATE NOT NULL,
+    Event_Location VARCHAR(100) NOT NULL,
+    Event_Description TEXT
+);
+
+-- Create the Attendees table
+CREATE TABLE Attendees (
+    Attendee_Id SERIAL PRIMARY KEY,
+    Attendee_Name VARCHAR(100) NOT NULL,
+    Attendee_Phone VARCHAR(15) NOT NULL,
+    Attendee_Email VARCHAR(100) NOT NULL,
+    Attendee_City VARCHAR(100) NOT NULL
+);
+
+-- Create the Registrations table
+CREATE TABLE Registrations (
+    Registration_Id SERIAL PRIMARY KEY,
+    Event_Id INT NOT NULL,
+    Attendee_Id INT NOT NULL,
+    Registration_Date DATE NOT NULL,
+    Registration_Amount DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (Event_Id) REFERENCES Events(Event_Id),
+    FOREIGN KEY (Attendee_Id) REFERENCES Attendees(Attendee_Id)
+);
+
+2. Data Creation
+
+-- Insert sample data into Events table
+INSERT INTO Events (Event_Name, Event_Date, Event_Location, Event_Description) VALUES
+('Tech Conference', '2024-08-15', 'New York', 'A conference on the latest in technology.'),
+('Music Festival', '2024-09-10', 'Los Angeles', 'A festival featuring various artists.'),
+('Art Exhibition', '2024-10-05', 'Chicago', 'An exhibition showcasing modern art.');
+
+-- Insert sample data into Attendees table
+INSERT INTO Attendees (Attendee_Name, Attendee_Phone, Attendee_Email, Attendee_City) VALUES
+('John Doe', '123-456-7890', 'john.doe@example.com', 'New York'),
+('Jane Smith', '987-654-3210', 'jane.smith@example.com', 'Los Angeles'),
+('Alice Johnson', '555-666-7777', 'alice.johnson@example.com', 'Chicago');
+
+-- Insert sample data into Registrations table
+INSERT INTO Registrations (Event_Id, Attendee_Id, Registration_Date, Registration_Amount) VALUES
+(1, 1, '2024-08-01', 100.00),
+(2, 2, '2024-09-01', 150.00),
+(3, 3, '2024-10-01', 200.00);
+
+select * from Events;
+
+Output:
+event_id |   event_name    | event_date | event_location |             event_description             
+----------+-----------------+------------+----------------+-------------------------------------------
+        1 | Tech Conference | 2024-08-15 | New York       | A conference on the latest in technology.
+        2 | Music Festival  | 2024-09-10 | Los Angeles    | A festival featuring various artists.
+        3 | Art Exhibition  | 2024-10-05 | Chicago        | An exhibition showcasing modern art.
+
+
+3. Manage Event Details
+a) Inserting a new event
+INSERT INTO Events (Event_Name, Event_Date, Event_Location, Event_Description) VALUES
+('Startup Pitch', '2024-11-20', 'San Francisco', 'An event for startups to pitch their ideas.');
+select * from Events;
+
+Output:
+event_id |   event_name    | event_date | event_location |              event_description              
+----------+-----------------+------------+----------------+---------------------------------------------
+        1 | Tech Conference | 2024-08-15 | New York       | A conference on the latest in technology.
+        2 | Music Festival  | 2024-09-10 | Los Angeles    | A festival featuring various artists.
+        3 | Art Exhibition  | 2024-10-05 | Chicago        | An exhibition showcasing modern art.
+        4 | Startup Pitch   | 2024-11-20 | San Francisco  | An event for startups to pitch their ideas.
+
+b) Updating an event's information
+
+UPDATE Events
+SET Event_Location = 'San Diego'
+WHERE Event_Id = 2;
+
+select * from Events;
+
+Output: 
+event_id |   event_name    | event_date | event_location |              event_description              
+----------+-----------------+------------+----------------+---------------------------------------------
+        1 | Tech Conference | 2024-08-15 | New York       | A conference on the latest in technology.
+        3 | Art Exhibition  | 2024-10-05 | Chicago        | An exhibition showcasing modern art.
+        4 | Startup Pitch   | 2024-11-20 | San Francisco  | An event for startups to pitch their ideas.
+        2 | Music Festival  | 2024-09-10 | San Diego      | A festival featuring various artists.
+
+c) Deleting an event
+
+DELETE FROM Registrations
+WHERE Event_Id = 3;
+
+DELETE FROM Events
+WHERE Event_Id = 3;
+
+select * from Events;
+
+Output: 
+event_id |   event_name    | event_date | event_location |              event_description              
+----------+-----------------+------------+----------------+---------------------------------------------
+        1 | Tech Conference | 2024-08-15 | New York       | A conference on the latest in technology.
+        4 | Startup Pitch   | 2024-11-20 | San Francisco  | An event for startups to pitch their ideas.
+        2 | Music Festival  | 2024-09-10 | San Diego      | A festival featuring various artists.
+
+4. Manage Track Attendees & Handle Events
+a) Inserting a new attendee
+
+INSERT INTO Attendees (Attendee_Name, Attendee_Phone, Attendee_Email, Attendee_City) VALUES
+('Bob Brown', '444-555-6666', 'bob.brown@example.com', 'Miami');
+
+select * from Attendees;
+
+attendee_id | attendee_name | attendee_phone |      attendee_email       | attendee_city 
+-------------+---------------+----------------+---------------------------+---------------
+           1 | John Doe      | 123-456-7890   | john.doe@example.com      | New York
+           2 | Jane Smith    | 987-654-3210   | jane.smith@example.com    | Los Angeles
+           3 | Alice Johnson | 555-666-7777   | alice.johnson@example.com | Chicago
+           4 | Bob Brown     | 444-555-6666   | bob.brown@example.com     | Miami
+
+b) Registering an attendee for an event
+
+INSERT INTO Attendees (Attendee_Name, Attendee_Phone, Attendee_Email, Attendee_City) VALUES
+('Bob Brown', '444-555-6666', 'bob.brown@example.com', 'Miami');
+
+
+INSERT INTO Registrations (Event_Id, Attendee_Id, Registration_Date, Registration_Amount) VALUES
+(1, 4, '2024-08-10', 120.00);
+
+select * from Registrations;
+
+Output: attendee_id | attendee_name | attendee_phone |      attendee_email       | attendee_city 
+-------------+---------------+----------------+---------------------------+---------------
+           1 | John Doe      | 123-456-7890   | john.doe@example.com      | New York
+           2 | Jane Smith    | 987-654-3210   | jane.smith@example.com    | Los Angeles
+           3 | Alice Johnson | 555-666-7777   | alice.johnson@example.com | Chicago
+           4 | Bob Brown     | 444-555-6666   | bob.brown@example.com     | Miami
+(4 rows)
+
+ registration_id | event_id | attendee_id | registration_date | registration_amount 
+-----------------+----------+-------------+-------------------+---------------------
+               1 |        1 |           1 | 2024-08-01        |              100.00
+               2 |        2 |           2 | 2024-09-01        |              150.00
+               3 |        3 |           3 | 2024-10-01        |              200.00
+               4 |        1 |           4 | 2024-08-10        |              120.00
+
+
+5. Develop Queries
+a) Retrieve event information
+
+SELECT * FROM Events;
+
+Output:
+
+event_id |   event_name    | event_date | event_location |              event_description              
+----------+-----------------+------------+----------------+---------------------------------------------
+        1 | Tech Conference | 2024-08-15 | New York       | A conference on the latest in technology.
+        2 | Music Festival  | 2024-09-10 | Los Angeles    | A festival featuring various artists.
+        3 | Art Exhibition  | 2024-10-05 | Chicago        | An exhibition showcasing modern art.
+        4 | Startup Pitch   | 2024-11-20 | San Francisco  | An event for startups to pitch their ideas.
+
+b) Generate attendee lists
+SELECT a.Attendee_Name, a.Attendee_Email, e.Event_Name
+FROM Attendees a
+JOIN Registrations r ON a.Attendee_Id = r.Attendee_Id
+JOIN Events e ON r.Event_Id = e.Event_Id;
+
+Output:
+attendee_name |      attendee_email       |   event_name    
+---------------+---------------------------+-----------------
+ John Doe      | john.doe@example.com      | Tech Conference
+ Jane Smith    | jane.smith@example.com    | Music Festival
+ Alice Johnson | alice.johnson@example.com | Art Exhibition
+ Bob Brown     | bob.brown@example.com     | Tech Conference
+
+c) Calculate event attendance statistics
+SELECT e.Event_Name, COUNT(r.Registration_Id) AS Total_Attendees, SUM(r.Registration_Amount) AS Total_Amount
+FROM Events e
+JOIN Registrations r ON e.Event_Id = r.Event_Id
+GROUP BY e.Event_Name;
+
+Output:
+event_name    | total_attendees | total_amount 
+-----------------+-----------------+--------------
+ Tech Conference |               2 |       220.00
+ Music Festival  |               1 |       150.00
+ Art Exhibition  |               1 |       200.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
